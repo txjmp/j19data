@@ -158,7 +158,7 @@ j19Rec.prototype.set = function( fld, val, operation, noFlagChange ) {
 
 // establish join connection with related record, returns true if successful, else returns false
 j19Rec.prototype.join = function( tblName ) {
-	var relation = this.def.related[tlbName];
+	var relation = this.def.related[tblName];
 	if( relation == undefined ) {
 		j19Error('relate() tlbName is not related: ' + tblName);
 		return;
@@ -167,9 +167,10 @@ j19Rec.prototype.join = function( tblName ) {
 	var joinFld = relation.join;
 	var toFld = relation.to;
 	var joinVal = this.get(joinFld);
-	var relatedNdx = damFindBinary( relatedTable, joinVal, toFld );
+	var relatedNdx = j19FindBinary( relatedTable, joinVal, toFld );
 	if( relatedNdx == -1 ) {
-		relatedNdx = damFind( relatedTable, joinVal, toFld );
+		alert("join nomatch with findBinary, " + tblName + ", " + joinVal);
+		relatedNdx = j19Find( relatedTable, joinVal, toFld );
 	}
 	if( relatedNdx == -1 ) {
 		return false;
@@ -198,7 +199,7 @@ j19Rec.prototype.addChild = function( childName, childNdx ) {
 // get value from related record, if fld parm not specified, obj with all fields is returned
 // related rec must have been joined using this.join() first
 j19Rec.prototype.getRelated = function( tblName, fld ) {
-	if( !this.def.related[tlbName] ) {
+	if( !this.def.related[tblName] ) {
 		j19Error("getRelated() not a related table: " + tblName);
 		return;
 	}
@@ -215,7 +216,7 @@ j19Rec.prototype.getRelated = function( tblName, fld ) {
 	if(fld) {
 		return relatedRec.get(fld);
 	} else {	
-		return relatedRec.get();
+		return relatedRec;
 	}
 }
 
@@ -427,24 +428,21 @@ function j19Sort( data, keys, filter) {
 	datadef parm: defines output recs
 ==================================================================
 */
-function j19Sum(sumdef, datadef) {
-	if( !(sumdef instanceof j19SumDef) ) {
-		alert( "DamSum 1st parm not a j19SumDef" );
-		return;
-	}
+function j19Sum(keyFlds, sumFlds, datadef) {
 	if( !(datadef instanceof j19DataDef) ) {
-		alert( "DamSum 2nd parm not a j19DataDef" );
+		j19Error( "Sum 2nd parm not a j19DataDef" );
 		return;
 	}
 	this.datadef = datadef;  // for output
-	this.keyflds = sumdef.keyFlds;
-	this.sumflds = sumdef.sumFlds;
+	this.keyflds = keyFlds;
+	this.sumflds = sumFlds;
 	this.totals = {};
 	this.keyvals = {};
 	this.isdatekey = [];
 	this.keycnt = this.keyflds.length;
 }
 j19Sum.prototype.sum = function(data, sortFilter) {
+	var thisObj = this;
 	j19db[this.datadef.name].length = 0;    // clear output data array
 	var keyfld, sumfld;
 	// init totals (key1: {sumfld1:0, sumfld2:0})
@@ -463,34 +461,35 @@ j19Sum.prototype.sum = function(data, sortFilter) {
 	}
 	var recvals, keyfld, compareval;
 	var firstPass = true;
-	damLoop(data, function(rec) {
+	j19Loop(data, function(rec) {
 		recvals = rec.get();
 		if( firstPass ) {
 			firstPass = false;
-			this.setKeyVals(recvals);
+			thisObj.setKeyVals(recvals);
 		}
 		// compare all keys, if any change, write total records
 		// begin compares with top level key (keyflds[0])		
-		for( var keyndx=0; keyndx < this.keycnt; keyndx++ ) {
-			keyfld = this.keyflds[keyndx];
-			if( this.isdatekey[keyndx] ) {
+		for( var keyndx=0; keyndx < thisObj.keycnt; keyndx++ ) {
+			keyfld = thisObj.keyflds[keyndx];
+			if( thisObj.isdatekey[keyndx] ) {
 				compareval = recvals[keyfld].getTime();
 			} else {
 				compareval = recvals[keyfld];
 			}
-			if( compareval != keyvals[keyfld] ) { 
-				this.writeTotals(keyndx);
-				this.setKeyVals(recvals);
+			if( compareval != thisObj.keyvals[keyfld] ) { 
+				thisObj.writeTotals(keyndx);
+				thisObj.setKeyVals(recvals);
 				break;
 			}	
 		}
 		// add current record to totals
-		for( var i=0; i<this.keycnt; i++ ) {
-			for( var z=0; z<this.sumflds.length; z++ ) {
-				sumfld = this.sumflds[z];
-				this.totals[keyfld][sumfld] += recvals[sumfld];
+		for( var i=0; i<thisObj.keycnt; i++ ) {
+			for( var z=0; z<thisObj.sumflds.length; z++ ) {
+				sumfld = thisObj.sumflds[z];
+				thisObj.totals[keyfld][sumfld] += recvals[sumfld];
 			};
 		};
+		console.table(thisObj.totals);
 	}, sortFilter)
 	
 	this.writeTotals(0);
@@ -518,7 +517,7 @@ j19Sum.prototype.writeTotals = function(keyChangeLevel) {
 		});
 		this.keyvals[key] = null;
 
-		outrec = new DamRec(this.datadef, outdata);
+		outrec = new j19Rec(this.datadef, outdata);
 		outrec.add();
 	}
 }
@@ -526,7 +525,7 @@ j19Sum.prototype.setKeyVals = function(recvals) {
 	var keyfld;
 	for( var i=0; i<this.keycnt; i++ ) {
 		keyfld = this.keyflds[i];
-		if( isdatekey[i] ) {
+		if( this.isdatekey[i] ) {
 			this.keyvals[keyfld] = recvals[keyfld].getTime();
 		} else {
 			this.keyvals[keyfld] = recvals[keyfld];

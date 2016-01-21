@@ -37,6 +37,12 @@ var dataDefSettings = {
 		flds: ["id", "name", "type"],
 		related: {},
 		children: []
+	},
+	totalpay: {   // output of sum process
+		name: "totalpay",
+		flds: ["paycode_id", "amt"],
+		related: {},
+		children: []
 	}
 }
 
