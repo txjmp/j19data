@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+	<script type="application/javascript" src="j19data.js"></script>
+	<script type="application/javascript" src="testdata.js"></script>
+	<script type="application/javascript" src="testdata_settings.js"></script>
+	<script type="application/javascript" src="test1.js"></script>
+	<script type="application/javascript" src="test2.js"></script>
+	<script>
+		var appStart = setInterval(readyCheck, 100);
+		function readyCheck() {
+			if (document.readyState === "complete") {
+				clearInterval(appStart);
+				main();
+			}
+		}
+		/*
+		** Important notes about data arrays **
+			1. automatically created on creation of a j19DataDef instance (unless data array already exists)
+			2. added to object referenced by j19db
+			3. name of array = name attribute of dataDefSettings obj literal
+			3. to empty a data array, set its length to 0, do not set to new empty array (breaks references)
+		*/
+		var db = {};  			// container for data arrays, us whatever name you like
+		var dataDefs = {};		// container for instances of j19DataDef objects
+
+		function main() {
+			console.log("start");
+			j19db = db;  			// reference used by j19 Functions, var j19db defined in j19data.js
+			loadData(testdata);   	// testdata defined in testdata.js
+			joinData();
+
+			// comment out tests you don't want run
+			test1();
+			test2();
+		}
+		// ------------------------------------------
+		function loadData(inData) {
+			var settings, dataDef, inRecs, inRec, j19rec;
+			for(recName in inData) {
+				console.log("load " + recName);
+				settings = dataDefSettings[recName];  // dataDefSettings in testdata_settings.js
+				dataDefs[settings.name] = new j19DataDef(settings);
+				inRecs = inData[recName];
+				for( var i=0, cnt=inRecs.length; i<cnt; i++ ) {
+					inRec = inRecs[i];
+					if( settings.name == "paycheck" ) {			// store actual date object, not string
+						inRec.paydate = new Date(inRec.paydate);
+					}
+					j19rec = new j19Rec(dataDefs[recName], inRec);
+					j19rec.add();   // data obj added to j19db[recName] array
+				};
+			};
+			console.log("loadData complete");
+		}
+		// ------------------------------------------
+		function joinData() {
+			var ok;
+			db.emp.forEach(function(rec) {
+				ok = rec.join("job");
+				if(!ok)	alert("emp_job join did not work"); 
+			})
+			db.paycheck.forEach(function(rec) {		
+				ok = rec.join("emp");	// this step will also add paycheck indx to parent emp's children.paycheck[]
+				if(!ok)	alert("paycheck_emp join did not work"); 
+			})
+			db.payline.forEach(function(rec) {
+				ok = rec.join("paycheck"); 	// this step will also add payline indx to parent paycheck's children.payline[]
+				if(!ok)	alert("payline_paycheck join did not work"); 
+
+				ok = rec.join("paycode");
+				if(!ok)	alert("payline_paycode join did not work"); 
+			})
+			console.log("joinData complete");
+		} 
+
+	</script>
+</head>
+
+<body>
+
+</body>
+</html>
+	

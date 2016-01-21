@@ -1,0 +1,53 @@
+// Data Definition Settings, used to create j19DataDef objects
+
+var dataDefSettings = {
+	emp: {
+		name: "emp",
+		flds: ["id", "name", "job_id"],
+		related: {
+			job: {join:"job_id", to:"id"}
+		},
+		children: ["paycheck"],
+	},
+	job: {
+		name: "job",
+		flds: ["id", "jobName", "class"],
+		related: {},
+		children: [],
+	},
+	paycheck: {
+		name: "paycheck",
+		flds: ["id", "emp_id", "paydate"],
+		related: {
+			emp: {join:"emp_id", to:"id"}   // parent
+		},
+		children: ["payline"]
+	},
+	payline: {
+		name: "payline",
+		flds: ["id", "paycheck_id", "paycode_id", "amt"],
+		related: {
+			paycheck: {join:"paycheck_id", to:"id"}, 	// parent
+			paycode: {join:"paycode_id", to:"id"}
+		},
+		children: []
+	},
+	paycode: {
+		name: "paycode",
+		flds: ["id", "name", "type"],
+		related: {},
+		children: []
+	},
+	totalpay: {   // output of sum process
+		name: "totalpay",
+		flds: ["paycode_id", "amt"],
+		related: {},
+		children: []
+	},
+	temp_emppay: {   // output of createTempEmpPay function
+		name: "temp_emppay",
+		flds: ["emp_id", "paycode_type", "paycode_name", "payline_amt"],
+		related: {},
+		children: []
+	}
+}

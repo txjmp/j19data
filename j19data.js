@@ -489,7 +489,6 @@ j19Sum.prototype.sum = function(data, sortFilter) {
 				thisObj.totals[keyfld][sumfld] += recvals[sumfld];
 			};
 		};
-		console.table(thisObj.totals);
 	}, sortFilter)
 	
 	this.writeTotals(0);
