@@ -1,25 +1,27 @@
-var j19db = {};
-var j19DataDefs = {};
+var db = {};  	// container for data arrays
+j19db = db;  	// used by j19 Functions
 
 function main() {
-	console.log("loading j19DataDefs");
-	var settings;
-	for(key in dataDefSettings) {
-		settings = dataDefSettings[key];
-		console.log(settings.name);
-		j19DataDefs[key] = new j19DataDef(settings);
-	}
-	//for( recName in inData ) { 
-	//	loadData(recName, inData[name]);
-	//}
+	console.log("start");
+	loadData(wsData);   // wsData defined in test1data.js
 }
 
-function loadData(recName, dataRecs) {
-	dataRecs.forEach(function(vals) {
-		def = j19DataDefs[recName];
-		rec = new j19Rec(def, vals);
-		rec.add();
-	})
+function loadData(inData) {
+	var settings, dataDef, inRecs, inRec, j19rec;
+	for(recName in inData) {
+		console.log("load " + recName);
+		settings = dataDefSettings[recName];
+		dataDef = new j19DataDef(settings);
+		inRecs = inData[recName];
+		for( var i=0, cnt=inRecs.length; i<cnt; i++ ) {
+			inRec = inRecs[i];
+			if( recName == "paycheck" ) {
+				inRec.paydate = new Date(inRec.paydate);
+			}
+			j19rec = new j19Rec(dataDef, inRec);
+			j19rec.add();   // rec obj added to j19db[recName] array
+		};
+	};
 } 
 
 	

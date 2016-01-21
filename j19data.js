@@ -1,3 +1,4 @@
+var j19db;	// must be set during startup by app  ex. j19db = db; where db = {};
 
 Array.prototype.j19GetNdx = function(searchVal) {
 	var ndx = -1;
@@ -9,10 +10,12 @@ Array.prototype.j19GetNdx = function(searchVal) {
 	}
 	return ndx;
 }
+
 function j19Error( msg ) {
 	var errMsg = '** Hey Programmer: j19 Error ** \n' + msg;
 	alert( errMsg );
 }
+
 function j19Sequence( length ) {
 	var seq = [];
 	for(var i=0; i<length; i++) {
@@ -20,6 +23,7 @@ function j19Sequence( length ) {
 	}
 	return seq;
 }
+
 function j19DataDef( settings ) {
 	this.name = settings.name;
 	if( j19db[this.name] == undefined ) {
@@ -93,11 +97,15 @@ j19Rec.prototype.get = function( fld, defaultVal ) {
 	return val;
 }
 
-// load multiple values from newVals object
+// load multiple values from newVals object, change flags not set unless setChangFlag parm = true
 j19Rec.prototype.load = function(newVals, setChangeFlag) {
 	for(fld in newVals) {
 		fldNdx = this.def.fldNdx[fld];
-		this.vals[fldNdx] = vals[fld];
+		if( fldNdx == undefined ) {
+			j19Error("load() newVals has invalid fld: " + fld);
+			return;
+		}
+		this.vals[fldNdx] = newVals[fld];
 		if( setChangeFlag ) {
 			this.fldChanged[fldNdx] = true;
 		}
@@ -108,6 +116,7 @@ j19Rec.prototype.load = function(newVals, setChangeFlag) {
 }
 
 // set value of a specific field, using operation parm the old val is modified by the specified val (add, subtract, multiply)
+// change flag is set unless noFlagChange = true
 j19Rec.prototype.set = function( fld, val, operation, noFlagChange ) {
 	var fldNdx = this.def.fldNdx[fld];
 
@@ -148,7 +157,7 @@ j19Rec.prototype.set = function( fld, val, operation, noFlagChange ) {
 }
 
 // establish join connection with related record, returns true if successful, else returns false
-j19Rec.prototype.relate = function( tblName ) {
+j19Rec.prototype.join = function( tblName ) {
 	var relation = this.def.related[tlbName];
 	if( relation == undefined ) {
 		j19Error('relate() tlbName is not related: ' + tblName);
@@ -187,6 +196,7 @@ j19Rec.prototype.addChild = function( childName, childNdx ) {
 }
 
 // get value from related record, if fld parm not specified, obj with all fields is returned
+// related rec must have been joined using this.join() first
 j19Rec.prototype.getRelated = function( tblName, fld ) {
 	if( !this.def.related[tlbName] ) {
 		j19Error("getRelated() not a related table: " + tblName);
@@ -241,6 +251,7 @@ j19Rec.prototype.clearChangedFlags = function( fld ) {
 
 // call specified function for each record in data array passing j19Rec obj to func
 // optional sortFilter specifies indexes of records to process and the order to process them
+// if func returns true, loop will stop
 function j19Loop( data, func, sortFilter ) {
 	if( !sortFilter ) {
 		var sortFilter = j19Sequence(data.length);
@@ -257,6 +268,7 @@ function j19Loop( data, func, sortFilter ) {
 // optional startNdx specifies index of rec to begin search
 // if findVal is a string, compares lower case values
 // if findVal is a date, compares val returned from date.getTime() (returns a number)
+
 function j19Find( data, findVal, fld, startNdx ) {
 	if( startNdx == undefined ) {
 		var startNdx = 0;
@@ -287,12 +299,12 @@ function j19Find( data, findVal, fld, startNdx ) {
 	return ndx;
 }
 
-
 // binary search of data array, compares each rec's fld val with findVal, returns index of 1st match, if no match returns -1
 // if findVal is a string, compares lower case values
 // if findVal is a date, compares val returned from date.getTime() (a number)
 // data must be already sorted by fld (typically primary key of table)
 // if data is not sorted by fld, an optional sortOrder can be specified
+
 function j19FindBinary( data, findVal, fld, sortOrder ) {
 	if( !sortOrder ) {
 		var sortOrder = j19Sequence(data.length);
@@ -331,7 +343,8 @@ function j19FindBinary( data, findVal, fld, sortOrder ) {
 // calls specified function with each record in data array
 // optional sortFilter specifies which records to process and order to process them
 // if func returns true, then ndx of record is added to results array
-// returned value, results array, contains indexes of records that met query criteria
+// returned value (results array) contains indexes of records that met query criteria
+
 function j19Qry( data, func, sortFilter ) {
 	if( !sortFilter ) {
 		var sortFilter = j19Sequence(data.length);
@@ -351,6 +364,7 @@ function j19Qry( data, func, sortFilter ) {
 // keys parm is array of key field names, ex. ["class", "name"], in order from highest to lowest level
 // optional filter specifies array of data indexes to include in sort (typically resulf of a qry)
 // ** the actual data records are not moved by this function **
+
 function j19Sort( data, keys, filter) {
 	var dataNdxs;  // array of index values that will be sorted and returned
 	if( filter ) {
@@ -383,7 +397,6 @@ function j19Sort( data, keys, filter) {
 	var sortReturn, keya, keyb;
 	var keyCnt = keys.length;
     dataNdxs.sort(function(a,b) {
-		sortReturn = 0;
         for(var i=0; i<keyCnt; i++) {
        		if( related[i] == null ) {
 				keya = data[a].get( keyFlds[i] );
@@ -392,14 +405,13 @@ function j19Sort( data, keys, filter) {
         		keya = data[a].getRelated( related[i], keyFlds[i] );
         		keyb = data[b].getRelated( related[i], keyFlds[i] );
         	}
-			if( descending[i] ) {
-				sortReturn = keya > keyb ? -1 : keya < keyb ? 1;
-			} else {
-				sortReturn = keya > keyb ? 1 : keya < keyb ? -1;
-			}
+			sortReturn = keya > keyb ? 1 : keya < keyb ? -1 : 0;
 			if( sortReturn != 0 ) {
+				if( descending[i] ) {
+					sortReturn *= -1;
+				}
 				break;
-			}
+			}	
 		}
 		return sortReturn;
 	});
@@ -412,7 +424,7 @@ function j19Sort( data, keys, filter) {
 	output array can be used for further processing
 
 	sumdef parm: parameters controlling sum process
-	datadef parm: used for the output data array
+	datadef parm: defines output recs
 ==================================================================
 */
 function j19Sum(sumdef, datadef) {
@@ -477,8 +489,8 @@ j19Sum.prototype.sum = function(data, sortFilter) {
 			for( var z=0; z<this.sumflds.length; z++ ) {
 				sumfld = this.sumflds[z];
 				this.totals[keyfld][sumfld] += recvals[sumfld];
-			});
-		});
+			};
+		};
 	}, sortFilter)
 	
 	this.writeTotals(0);

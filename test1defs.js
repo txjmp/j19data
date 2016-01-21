@@ -39,3 +39,27 @@ var dataDefSettings = {
 		children: []
 	}
 }
+
+/*
+// Settings for j19SumDefs
+salesSumSettings = {
+	keyFlds: ["regionid", "salesmanid", "customerid"],
+	sumFlds: ["salesAmt"],
+}
+
+var damDataDefs = {
+	salesTotals: {
+		name: "salesTotals",
+		flds: ["regionid", "salesmanid", "customerid", "salesAmt"]
+		related: {
+			region:   {join:"regionid", to:"id"},
+			salesman: {join:"salesmanid", to:"id"},
+			customer: {join:"customerid", to:"id"},
+		},
+		children: [];
+	}
+}
+
+loop payline
+	ouput {paycheck.emp_id, paycode_id, amt
+*/

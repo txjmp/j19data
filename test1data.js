@@ -1,6 +1,6 @@
 // simulated data as would typically be received from a web service
 
-var inData = {
+var wsData = {
 	emp: [
 		{id:1, name:"Tom", job_id:2},
 		{id:2, name:"Siana", job_id:1},
