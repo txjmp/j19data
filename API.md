@@ -47,28 +47,54 @@ NOTE: moving or deleting a record from its data array will break relationships t
 ##j19Rec Methods  
 .add() - adds this obj to j19db[dataDef.name], sets value of field myndx  
 .get() - return obj containing all field values {fld1:val, fld2:val, ... }  
-.get(fld, defaultVal) - return value of requested field, defaultVal (optional) if val is undefined, return it  
-.set(fld, val, operation, noFlagChange) - set fld to val  
-&nbsp; &nbsp; operation (optional) - "add" to, "subtract" from, "multiply" by previous val  
-&nbsp; &nbsp; can use constants j19Rec.ADD, .SUBTRACT, .MULTIPLY  
-&nbsp; &nbsp; noFlagChange (optional) if true, don't set change flag  
-.load(newVals, noFlagChange) - set multiple values, newVals is obj {fld:newval}  
-.join(tblName) - join this rec to related rec in tblName  
-&nbsp; &nbsp; tblName is string with name of table (data type) to join to  
-&nbsp; &nbsp; index of related record is saved in this record  
-&nbsp; &nbsp; if this record is a child of the related record, this.myndx is loaded into parent's rec  
-&nbsp; &nbsp; .join needs only to be run once for each related record type  
-.getRelated(tblName, fld) - get value from related record (join must have been executed first)   
-.getChildren(tblName) - returns array of rec indexes for specified child rec  
-.clearChangedFlags(fld) - clears rec and fld changed flags  
-&nbsp; &nbsp; fld (optional) - clear change flag just for this field  
+.get( fld, defaultVal ) - return value of requested field, defaultVal (optional) if val is undefined, return it  
+.set( fld, val, operation, noFlagChange ) - set fld to val  
+&nbsp; &nbsp; &nbsp; &nbsp; operation (optional) - "add" to, "subtract" from, "multiply" by previous val  
+&nbsp; &nbsp; &nbsp; &nbsp; can use constants j19Rec.ADD, .SUBTRACT, .MULTIPLY  
+&nbsp; &nbsp; &nbsp; &nbsp; noFlagChange (optional) if true, don't set change flag  
+.load( newVals, noFlagChange ) - set multiple values, newVals is obj {fld:newval}  
+.join( tblName ) - join this rec to related rec in tblName  
+&nbsp; &nbsp; &nbsp; &nbsp; tblName is string with name of table (data type) to join to  
+&nbsp; &nbsp; &nbsp; &nbsp; index of related record is saved in this record  
+&nbsp; &nbsp; &nbsp; &nbsp; if this record is a child of the related record, this.myndx is loaded into parent's rec  
+&nbsp; &nbsp; &nbsp; &nbsp; .join needs only to be run once for each related record type  
+.getRelated( tblName, fld ) - get value from related record (join must have been executed first)   
+&nbsp; &nbsp; &nbsp; &nbsp; if fld is not specified, reference to related j19Rec is returned
+.getChildren( tblName ) - returns array of rec indexes for specified child rec  
+.clearChangedFlags( fld ) - clears rec and fld changed flags  
+&nbsp; &nbsp; &nbsp; &nbsp; fld (optional) - clear change flag just for this field  
 
 ##Dataset Functions  
-j19Loop( data, func, sortFilter )
-* data - 
-* func - 
-* sortFilter - 
+Following values are used for multiple functions.
+* data - array containing j19Recs of desired rec type
+* func - function called on each iteration thru data, reference to j19Rec is passed as parm
+* sortFilter or filter - array of data index values to process, in order; ex. [5, 3, 8, 19]
 
+j19Loop( data, func, sortFilter ) - call func for each rec in data  
+&nbsp; &nbsp; &nbsp; &nbsp; sortFilter optional - if not specified, read all recs in natural order  
+  
+j19Find( data, findVal, fld, startNdx ) - sequential search for fld === findVal  
+&nbsp; &nbsp; &nbsp; &nbsp; return rec index of 1st match  
+&nbsp; &nbsp; &nbsp; &nbsp; startNdx (optional) - if not specified, starts at 0  
+  
+j19FindBinary( data, findVal, fld, sortOrder ) binary search for fld === findVal  
+&nbsp; &nbsp; &nbsp; &nbsp; data must be in order by fld (typically primary key)  
+&nbsp; &nbsp; &nbsp; &nbsp; if not, an optional sortOrder can be used  
+  
+j19Qry( data, func, sortFilter ) - return array of indexes where func returns true  
+  
+j19Sort( data, keys, filter ) - return array of indexes in sorted order  
+&nbsp; &nbsp; &nbsp; &nbsp; keys is array of fld names, ex. ["job.jobName", "name"]  
+&nbsp; &nbsp; &nbsp; &nbsp; to specify descending order for key add :d, ex. "paydate:d"   
+&nbsp; &nbsp; &nbsp; &nbsp; to use related value, prefix with tblName., ex "job.jobName"  
+  
+##j19Sum
+Sum process works a little differently. 
+Output of sum process is an array of j19Recs, which can be used for further processing.  
+Steps  
+1. Create settings (obj literal) that define data definition of output recs just like any other rec
+    * the flds array should be all the keyFlds and sumFlds
+2. Create j19DataDef using these settings: totalsDataDef = new j19DataDef(settings)
 
 
 
