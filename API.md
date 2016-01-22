@@ -37,18 +37,18 @@ Attributes
 <hr>
 
 ##j19Rec
-Every data record is an instance of this type.
+Every data record is an instance of this type.  
 newRec = new j19Rec( dataDef, initVals )  
 * dataDef is instance of j19DataDef
 * initVals is optional, an object like {fldname1: val1, fldname2: val2, ...}, sets initial values of data record
 
-##j19Rec Methods
-.add() - adds obj to j19db[dataDef.name], sets value of field myndx 
-.get() - return obj containing all fields
-.get(fld, defaultVal) - return value of requested field, defaultVal (optional) if val is undefined, return it
+##j19Rec Methods  
+.add() - adds obj to j19db[dataDef.name], sets value of field myndx  
+.get() - return obj containing all fields  
+.get(fld, defaultVal) - return value of requested field, defaultVal (optional) if val is undefined, return it  
 .set(fld, val, operation, noFlagChange) - set fld to val  
-    * operation (optional) - add, subtract, multiply previous value by val
-    can use constants j19Rec.ADD, .SUBTRACT, .MULTIPLY  
-	* noFlagChange (optional) if true, don't set change flag
-.load(newVals, noFlagChange) - set multiple values, newVals is obj {fld:newval}
+&nbsp; &nbsp; operation (optional) - add, subtract, multiply previous value by val</label><br>
+&nbsp; &nbsp; can use constants j19Rec.ADD, .SUBTRACT, .MULTIPLY  
+&nbsp &nbsp noFlagChange (optional) if true, don't set change flag  
+.load(newVals, noFlagChange) - set multiple values, newVals is obj {fld:newval}  
 
