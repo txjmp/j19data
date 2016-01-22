@@ -5,7 +5,7 @@ The purpose of this javascript module is to provide client side ( in browser ) d
 * find  - sequential or binary search
 * query - get result set using complex conditions including values from related tables
 * modify - tracks data changes automatically
-*sort - multiple keys, asc or desc, use values in related tables
+* sort - multiple keys, asc or desc, use values in related tables
 * sum - total on multiple keys, includes subtotals  
 
 Does not use sql. Very simple design. Data is not stored on the client device (in memory only). Does not perform automatic syncs with server database. The application controls when changes are sent to server and when local data is refreshed.  
@@ -22,15 +22,4 @@ Use Case Attributes:
 * Data manipulation occurs on client
 * Data changes sent to server on demand
   
-For more information see:  https://github.com/txjmp/j19data    
-  
-Working code suitable for testing should be ready by end of January 2016.  
-  
-If you have any interest in this project as a user or contributor, please let me know.  
-  
-Thanks.  
-  
-Jay Poss  
-jayposs@ymail.com  
-(972) 489 - 8107  
 
