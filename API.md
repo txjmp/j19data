@@ -41,11 +41,12 @@ Every data record is an instance of this type.
 newRec = new j19Rec( dataDef, initVals )  
 * dataDef is instance of j19DataDef
 * initVals is optional, an object like {fldname1: val1, fldname2: val2, ...}, sets initial values of data record  
+  
 NOTE: moving or deleting a record from its data array will break relationships to other records
 
 ##j19Rec Methods  
-.add() - adds obj to j19db[dataDef.name], sets value of field myndx  
-.get() - return obj containing all fields  
+.add() - adds this obj to j19db[dataDef.name], sets value of field myndx  
+.get() - return obj containing all field values {fld1:val, fld2:val, ... }  
 .get(fld, defaultVal) - return value of requested field, defaultVal (optional) if val is undefined, return it  
 .set(fld, val, operation, noFlagChange) - set fld to val  
 &nbsp; &nbsp; operation (optional) - "add" to, "subtract" from, "multiply" by previous val  
@@ -54,17 +55,19 @@ NOTE: moving or deleting a record from its data array will break relationships t
 .load(newVals, noFlagChange) - set multiple values, newVals is obj {fld:newval}  
 .join(tblName) - join this rec to related rec in tblName  
 &nbsp; &nbsp; tblName is string with name of table (data type) to join to  
-&nbsp; &nbsp; index of related record is saved in this record
-&nbsp; &nbsp; if this record is a child of the related record, this.myndx is loaded into parent's rec 
-&nbsp; &nbsp; .join needs only to be run once for each related record type 
-.getRelated(tblName, fld) - get value from related record (join must have been executed first)  
+&nbsp; &nbsp; index of related record is saved in this record  
+&nbsp; &nbsp; if this record is a child of the related record, this.myndx is loaded into parent's rec  
+&nbsp; &nbsp; .join needs only to be run once for each related record type  
+.getRelated(tblName, fld) - get value from related record (join must have been executed first)   
 .getChildren(tblName) - returns array of rec indexes for specified child rec  
 .clearChangedFlags(fld) - clears rec and fld changed flags  
 &nbsp; &nbsp; fld (optional) - clear change flag just for this field  
 
-##Dataset Functions
-
-
+##Dataset Functions  
+j19Loop( data, func, sortFilter )
+* data - 
+* func - 
+* sortFilter - 
 
 
 

@@ -97,8 +97,8 @@ j19Rec.prototype.get = function( fld, defaultVal ) {
 	return val;
 }
 
-// load multiple values from newVals object, change flags not set unless setChangFlag parm = true
-j19Rec.prototype.load = function(newVals, setChangeFlag) {
+// load multiple values from newVals object, if noFlagChange, don't set change flags
+j19Rec.prototype.load = function(newVals, noFlagChange) {
 	for(fld in newVals) {
 		fldNdx = this.def.fldNdx[fld];
 		if( fldNdx == undefined ) {
@@ -106,11 +106,11 @@ j19Rec.prototype.load = function(newVals, setChangeFlag) {
 			return;
 		}
 		this.vals[fldNdx] = newVals[fld];
-		if( setChangeFlag ) {
+		if( !noFlagChange ) {
 			this.fldChanged[fldNdx] = true;
 		}
 	}
-	if( setChangeFlag ) {
+	if( !noFlagChange ) {
 		this.recChanged = true;
 	}	
 }
