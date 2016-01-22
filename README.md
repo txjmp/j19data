@@ -22,6 +22,8 @@ j19Loop( db.emp, function(emp) {
 
 ```
 
+For a little different intro: https://github.com/txjmp/j19data/blob/master/intro.md  
+  
 ### Key Points  
 1. Data records are instances of an object (j19Rec)  
 2. These objects have a set of methods for interacting with them  
