@@ -38,12 +38,6 @@ var dataDefSettings = {
 		related: {},
 		children: []
 	},
-	totalpay: {   // output of sum process
-		name: "totalpay",
-		flds: ["paycode_id", "amt"],
-		related: {},
-		children: []
-	},
 	outEmpPay: {   // output record of app function
 		name: "outEmpPay",
 		flds: ["emp_id", "paycheck_id", "paydate", "paycode_type", "paycode_name", "amt"],
