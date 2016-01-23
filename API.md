@@ -92,24 +92,43 @@ j19Sort( data, keys, filter ) - return array of indexes in sorted order
 Sum process works a little differently.  
 Output of sum process is an array of j19Recs, which can be used for further processing.  
 Steps  
-1. Create settings (obj literal) that define data definition of output recs just like any other rec
+1. Create settings (obj literal) that define data definition of output recs just like any other rec  
 &nbsp; &nbsp; &nbsp; &nbsp; the flds array should be all the keyFlds and sumFlds
-2. Create j19DataDef using these settings
-3. Create instance of j19Sum
-4. Execute .sum method ( data, sortFilter )
-Here is example code from test1.js:
-```
-dataDefs["totalpay"] = new j19DataDef( dataDefSettings["totalpay"] );   
-var keyFlds = ["paycode_id"];
-var sumFlds = ["amt"];
-var sumPay = new j19Sum(keyFlds, sumFlds, dataDefs["totalpay"]);   // datadef defines output recs
+2. Create j19DataDef using these settings  
+3. Create instance of j19Sum  
+4. Execute .sum method ( data, sortFilter )  
+Here is example code from test4.js:  
 
-var sortOrder = j19Sort( db.payline, ["paycode_id"] );  // data must be sorted by keys
+```
+totalpaySettings = {   		// output of sum process
+	name: "totalpay",		// j19db.totalpay - data rec array will be created when dataDef is created
+	flds: ["paycode_id", "amt"],
+	related: {
+		paycode: { join:"paycode_id", to:"id" }
+	},
+	children: []
+}
+var dataDef = new j19DataDef(totalpaySettings);
+
+var keyflds = ["paycode_id"];
+var sumflds = ["amt"];
+
+var sumPay = new j19Sum( keyflds, sumflds, dataDef );
+
+var sortOrder = j19Sort( db.payline, keyflds );
+
 sumPay.sum( db.payline, sortOrder );
 
-j19Loop( db.totalpay, function(rec) {
-	console.log( rec.get() );
-})
+var totline;
+var out = {};
+j19Loop( db.totalpay, function(totalpay) {
+	totalpay.join("paycode");	
+	out.paycodeType = totalpay.getRelated("paycode", "type");
+	out.paycodeName = totalpay.getRelated("paycode", "name");
+	out.total = totalpay.get("amt");
+	console.log( out );
+});
+
 ```
 
 
