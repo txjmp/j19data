@@ -44,10 +44,12 @@ var dataDefSettings = {
 		related: {},
 		children: []
 	},
-	temp_emppay: {   // output of createTempEmpPay function
-		name: "temp_emppay",
-		flds: ["emp_id", "paycode_type", "paycode_name", "payline_amt"],
-		related: {},
+	outEmpPay: {   // output record of app function
+		name: "outEmpPay",
+		flds: ["emp_id", "paycheck_id", "paydate", "paycode_type", "paycode_name", "amt"],
+		related: {
+			emp: {join:"emp_id", to:"id"}
+		},
 		children: []
 	}
 }

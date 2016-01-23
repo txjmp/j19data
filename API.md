@@ -59,7 +59,7 @@ NOTE: moving or deleting a record from its data array will break relationships t
 &nbsp; &nbsp; &nbsp; &nbsp; if this record is a child of the related record, this.myndx is loaded into parent's rec  
 &nbsp; &nbsp; &nbsp; &nbsp; .join needs only to be run once for each related record type  
 .getRelated( tblName, fld ) - get value from related record (join must have been executed first)   
-&nbsp; &nbsp; &nbsp; &nbsp; if fld is not specified, reference to related j19Rec is returned
+&nbsp; &nbsp; &nbsp; &nbsp; if fld is not specified, reference to related j19Rec is returned  
 .getChildren( tblName ) - returns array of rec indexes for specified child rec  
 .clearChangedFlags( fld ) - clears rec and fld changed flags  
 &nbsp; &nbsp; &nbsp; &nbsp; fld (optional) - clear change flag just for this field  
@@ -77,7 +77,7 @@ j19Find( data, findVal, fld, startNdx ) - sequential search for fld === findVal
 &nbsp; &nbsp; &nbsp; &nbsp; return rec index of 1st match  
 &nbsp; &nbsp; &nbsp; &nbsp; startNdx (optional) - if not specified, starts at 0  
   
-j19FindBinary( data, findVal, fld, sortOrder ) binary search for fld === findVal  
+j19FindBinary( data, findVal, fld, sortOrder ) - binary search for fld === findVal  
 &nbsp; &nbsp; &nbsp; &nbsp; data must be in order by fld (typically primary key)  
 &nbsp; &nbsp; &nbsp; &nbsp; if not, an optional sortOrder can be used  
   
@@ -89,15 +89,28 @@ j19Sort( data, keys, filter ) - return array of indexes in sorted order
 &nbsp; &nbsp; &nbsp; &nbsp; to use related value, prefix with tblName., ex "job.jobName"  
   
 ##j19Sum
-Sum process works a little differently. 
+Sum process works a little differently.  
 Output of sum process is an array of j19Recs, which can be used for further processing.  
 Steps  
 1. Create settings (obj literal) that define data definition of output recs just like any other rec
-    * the flds array should be all the keyFlds and sumFlds
-2. Create j19DataDef using these settings: totalsDataDef = new j19DataDef(settings)
+&nbsp; &nbsp; &nbsp; &nbsp; the flds array should be all the keyFlds and sumFlds
+2. Create j19DataDef using these settings
+3. Create instance of j19Sum
+4. Execute .sum method ( data, sortFilter )
+Here is example code from test1.js:
+```
+dataDefs["totalpay"] = new j19DataDef( dataDefSettings["totalpay"] );   
+var keyFlds = ["paycode_id"];
+var sumFlds = ["amt"];
+var sumPay = new j19Sum(keyFlds, sumFlds, dataDefs["totalpay"]);   // datadef defines output recs
 
+var sortOrder = j19Sort( db.payline, ["paycode_id"] );  // data must be sorted by keys
+sumPay.sum( db.payline, sortOrder );
 
-
+j19Loop( db.totalpay, function(rec) {
+	console.log( rec.get() );
+})
+```
 
 
 
