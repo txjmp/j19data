@@ -6,7 +6,7 @@ j19db = db;    // j19 funcs use this var
 // define rec types
 settings = {
   emp: {
-		name: "emp",    // ** used as name of data rec array in j19db **
+		name: "emp",
 		flds: ["id", "name", "job_id"],
 		related: {
 			job: {join:"job_id", to:"id"}
@@ -25,8 +25,15 @@ empDataDef = new j19DataDef( settings.emp );  // creates j19db[emp] array
 jobDataDef = new j19DataDef( settings.job );  // creates j19db[job] array
 
 // create data records & add to data array
-empRec = new j19Rec( empDataDef, {id:1, name:"Bob", job_id:3} );
+var empData = {id:1, name:"Bob", job_id:3};
+var empRec = new j19Rec( empDataDef, empData );
 empRec.add();
+... add all emp and job records (typically loop thru response from web service)
+
+// for each related table, execute join method
+db.emp.forEach( function(emp) {
+	ok = emp.join("job");  // saves index of related job record in this emp record
+});
 ```
 ##To Understand the whole process
 1. Download Zip of this repo & extract

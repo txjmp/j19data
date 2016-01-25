@@ -93,16 +93,17 @@ Sum process works a little differently.
 Output of sum process is an array of j19Recs, which can be used for further processing.  
 Steps  
 1. Create settings (obj literal) that define data definition of output recs just like any other rec  
-&nbsp; &nbsp; &nbsp; &nbsp; the flds array should be all the keyFlds and sumFlds
+&nbsp; &nbsp; &nbsp; &nbsp; the flds array should be all the keyFlds + sumFlds + "count"   
 2. Create j19DataDef using these settings  
 3. Create instance of j19Sum  
-4. Execute .sum method ( data, sortFilter )  
+4. Sort data array by keyflds (using j19Sort)
+5. Execute .sum method ( data, sortFilter )  
 Here is example code from test4.js:  
 
 ```
 totalpaySettings = {   		// output of sum process
 	name: "totalpay",		// j19db.totalpay - data rec array will be created when dataDef is created
-	flds: ["paycode_id", "amt"],
+	flds: ["paycode_id", "amt", "count"],
 	related: {
 		paycode: { join:"paycode_id", to:"id" }
 	},
@@ -119,7 +120,6 @@ var sortOrder = j19Sort( db.payline, keyflds );
 
 sumPay.sum( db.payline, sortOrder );
 
-var totline;
 var out = {};
 j19Loop( db.totalpay, function(totalpay) {
 	totalpay.join("paycode");	

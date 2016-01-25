@@ -2,7 +2,7 @@
 
 totalpaySettings = {   				// output of sum process
 	name: "totalpay",				// j19db.totalpay - data rec array will be created when dataDef is created
-	flds: ["paycode_id", "amt"],
+	flds: ["paycode_id", "amt", "count"],
 	related: {
 		paycode: { join:"paycode_id", to:"id" }
 	},
@@ -10,6 +10,7 @@ totalpaySettings = {   				// output of sum process
 }
 
 function test4() {
+	console.log("*** test4 ***");
 	var dataDef = new j19DataDef(totalpaySettings);
 	
 	var keyflds = ["paycode_id"];

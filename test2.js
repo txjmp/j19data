@@ -2,7 +2,7 @@
 // flds: ["emp_id", "paycheck_id", "paydate", "paycode_type", "paycode_name", "amt"],
 
 function test2() {
-	console.group("test2");
+	console.group("*** test2 ***");
 	var settings = dataDefSettings["outEmpPay"];  // in testdata_settings.js
 	dataDefs[settings.name] = new j19DataDef(settings);
 	var out = {};

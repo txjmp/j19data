@@ -4,7 +4,6 @@ function test1() {
 	showChildren();
 	showRelated();
 	sortData();
-	sumPay();
 	qryData();
 	console.log("*************** test1 done ****************");
 }
@@ -60,25 +59,6 @@ function sortData() {
 	j19Loop( db.paycheck, function(paycheck) {
 		console.log( paycheck.get("paydate"), paycheck.getRelated("emp", "name") );
 	}, sortOrder);
-
-	console.groupEnd();
-}
-
-function sumPay() {
-	console.group("sumPay");
-
-	// datadef defines output rec of sum process, j19db[totalpay] also created
-	dataDefs["totalpay"] = new j19DataDef( dataDefSettings["totalpay"] );   
-	var keyFlds = ["paycode_id"];
-	var sumFlds = ["amt"];
-	var sumPay = new j19Sum(keyFlds, sumFlds, dataDefs["totalpay"]);
-
-	var sortOrder = j19Sort( db.payline, ["paycode_id"] );  // data must be sorted by keys
-	sumPay.sum( db.payline, sortOrder );
-
-	j19Loop( db.totalpay, function(rec) {
-		console.log( rec.get() );
-	})
 
 	console.groupEnd();
 }

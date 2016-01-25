@@ -1,6 +1,7 @@
 // display paycheck data by emp
 
 function test3() {
+	console.log("*** test3 ***");
 	var empPaychecks, paylines;
 	var tot = 0;
 	j19Loop( db.emp, function(emp) {
