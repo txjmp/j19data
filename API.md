@@ -74,10 +74,11 @@ j19Loop( data, func, sortFilter ) - call func for each rec in data
 &nbsp; &nbsp; &nbsp; &nbsp; sortFilter optional - if not specified, read all recs in natural order  
   
 j19Find( data, findVal, fld, startNdx ) - sequential search for fld === findVal  
-&nbsp; &nbsp; &nbsp; &nbsp; return rec index of 1st match  
+&nbsp; &nbsp; &nbsp; &nbsp; return rec index of 1st match (-1 if no match)  
 &nbsp; &nbsp; &nbsp; &nbsp; startNdx (optional) - if not specified, starts at 0  
   
 j19FindBinary( data, findVal, fld, sortOrder ) - binary search for fld === findVal  
+&nbsp; &nbsp; &nbsp; &nbsp; return rec index of match (-1 if no match)  
 &nbsp; &nbsp; &nbsp; &nbsp; data must be in order by fld (typically primary key)  
 &nbsp; &nbsp; &nbsp; &nbsp; if not, an optional sortOrder can be used  
   
@@ -96,7 +97,7 @@ Steps
 &nbsp; &nbsp; &nbsp; &nbsp; the flds array should be all the keyFlds + sumFlds + "count"   
 2. Create j19DataDef using these settings  
 3. Create instance of j19Sum  
-4. Sort data array by keyflds (using j19Sort)
+4. Sort data array by keyflds (using j19Sort)  
 5. Execute .sum method ( data, sortFilter )  
 Here is example code from test4.js:  
 
@@ -130,6 +131,11 @@ j19Loop( db.totalpay, function(totalpay) {
 });
 
 ```
+The sum method's output data array contains total record(s) for each time any key value changes.  
+* If the highest level key changes (keyflds[0]), a record is output for every key level.
+* If the lowest level key changes, a record is output just for that key.  
+  
+Look at test5.js output to better understand how it works.
 
 
 
