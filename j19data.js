@@ -28,6 +28,8 @@ function j19DataDef( settings ) {
 	this.name = settings.name;
 	if( j19db[this.name] == undefined ) {
 		j19db[this.name] = [];
+	} else {
+		j19db[this.name].length = 0;
 	}
 	this.data = j19db[this.name];
 	this.flds = settings.flds.slice();
@@ -453,6 +455,8 @@ j19Sum.prototype.sum = function(data, sortFilter) {
 			sumfld = this.sumflds[z];	
 			this.totals[keyfld][sumfld] = 0;
 		}
+		this.totals[keyfld].count = 0;
+
 		if(data[0].get(keyfld) instanceof Date) {
 			this.isdatekey[i] = true;
 		} else {
@@ -467,6 +471,16 @@ j19Sum.prototype.sum = function(data, sortFilter) {
 			firstPass = false;
 			thisObj.setKeyVals(recvals);
 		}
+		/* --- debug code ---
+		var kval;
+		for( kf in thisObj.totals ) {
+			kval = thisObj.keyvals[kf];
+			for( sf in thisObj.totals[kf] ) {
+				console.log( kf, kval, sf, thisObj.totals[kf][sf] );
+			}
+		}
+		--- end debug code --- */
+
 		// compare all keys, if any change, write total records
 		// begin compares with top level key (keyflds[0])		
 		for( var keyndx=0; keyndx < thisObj.keycnt; keyndx++ ) {
@@ -484,6 +498,8 @@ j19Sum.prototype.sum = function(data, sortFilter) {
 		}
 		// add current record to totals
 		for( var i=0; i<thisObj.keycnt; i++ ) {
+			keyfld = thisObj.keyflds[i];
+			thisObj.totals[keyfld].count++;
 			for( var z=0; z<thisObj.sumflds.length; z++ ) {
 				sumfld = thisObj.sumflds[z];
 				thisObj.totals[keyfld][sumfld] += recvals[sumfld];
@@ -514,6 +530,8 @@ j19Sum.prototype.writeTotals = function(keyChangeLevel) {
 			outdata[sumfld] = keytotals[sumfld];
 			keytotals[sumfld] = 0;
 		});
+		outdata.count = keytotals.count;
+		keytotals.count = 0;
 		this.keyvals[key] = null;
 
 		outrec = new j19Rec(this.datadef, outdata);
