@@ -21,11 +21,11 @@ j19Loop( db.emp, function(emp) {
 }, selected);
 
 ```
-
-For a little different intro: [intro.md](https://github.com/txjmp/j19data/blob/master/intro.md)  
+##Links  
+* [Intro](https://github.com/txjmp/j19data/blob/master/intro.md)  
+* [Quick Start](https://github.com/txjmp/j19data/blob/master/Quick_Start.md)  
+* [API](https://github.com/txjmp/j19data/blob/master/API.md)  
   
-Quick Start: [Quick_Start.md](https://github.com/txjmp/j19data/blob/master/Quick_Start.md)  
-
 ### Key Points  
 1. Data records are instances of an object (j19Rec)  
 2. These objects have a set of methods for interacting with them  
