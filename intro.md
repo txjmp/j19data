@@ -18,7 +18,7 @@ The following functionality is included:
   
 Goal is to handle basic data access needs that would otherwise be difficult to accomplish in the browser. It in no way is intended to provide functionality comparable to a full blown sql database. Should work in any current browser.  
   
-Typical Use Case Attributes:  
+##Typical Use Case Attributes:  
 * Single Page App
 * Primary (server side) database provides persistent storage
 * Primary db can be relational or simple key:value
