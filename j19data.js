@@ -60,7 +60,7 @@ function j19Rec( datadef, initVals ) {
 	this.recChanged = false;
 	this.fldChanged = [];
 	if(initVals) {
-		this.load(initVals);
+		this.load(initVals, true);
 	}
 	this.children = {};
 	var childname;
@@ -71,7 +71,8 @@ function j19Rec( datadef, initVals ) {
 }
 
 j19Rec.prototype.add = function() {
-	this.set( 'myndx', this.def.data.length );
+	var noFlagChange = true;
+	this.set( 'myndx', this.def.data.length, undefined, noFlagChange );
 	this.def.data.push( this );
 }
 
@@ -117,7 +118,7 @@ j19Rec.prototype.load = function(newVals, noFlagChange) {
 	}	
 }
 
-// set value of a specific field, using operation parm the old val is modified by the specified val (add, subtract, multiply)
+// set value of a specific field, using optional operation parm the old val is modified by the specified val (add, subtract, multiply)
 // change flag is set unless noFlagChange = true
 j19Rec.prototype.set = function( fld, val, operation, noFlagChange ) {
 	var fldNdx = this.def.fldNdx[fld];
@@ -128,6 +129,10 @@ j19Rec.prototype.set = function( fld, val, operation, noFlagChange ) {
 	}   
 	if( val == undefined ) {
 		j19Error("set() parm val is undefined, field=" + fldName);
+		return;
+	}
+	if( operation == true ) {  // typically caused by noFlagChange being the 3rd parm
+		j19Error("check j19Rec.set() parms, 3rd parm (operation) is set to true");
 		return;
 	}
 	if( !noFlagChange ) {
@@ -229,6 +234,19 @@ j19Rec.prototype.getChildren = function( childName ) {
 		return;
 	}
 	return this.children[childName].slice();	
+}
+
+// return obj containing changed values {fldname:newValue}
+j19Rec.prototype.getChanged = function() {
+	var fldName;
+	var changes = {};
+	for( var i=0, cnt=this.fldChanged.length; i<cnt; i++ ) {
+		if( this.fldChanged[i] ) {
+			fldName = this.def.flds[i];
+			changes[fldName] = this.vals[i];
+		}
+	}
+	return changes;
 }
 
 // clear record & field changed flags (typically run after save operation)
