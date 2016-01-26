@@ -1,28 +1,21 @@
-// display paycheck data by emp
+// using getChildren() display payline by paycheck by emp
 
 function test3() {
 	console.log("*** test3 ***");
-	var empPaychecks, paylines;
-	var tot = 0;
+	var empPaychecks;
 	j19Loop( db.emp, function(emp) {
-		console.group( emp.get("name") );
+		console.group( emp.get("name") );	
 		empPaychecks = emp.getChildren("paycheck");
-
-		// --- paychecks ------
-		j19Loop( db.paycheck, function(paycheck) {
-			console.log( fmtDate( paycheck.get("paydate") ) );
-			paylines = paycheck.getChildren("payline");
-
-			// --- paylines --------
-			j19Loop( db.payline, function(payline) {
-				tot += payline.get("amt");
-				paycodeName = payline.getRelated( "paycode", "name" );
-				console.log( paycodeName, payline.get("amt") );
-			}, paylines);
-			console.log("-------------");
-		}, empPaychecks);  // paycheck loop end
-		
+		j19Loop( db.paycheck, test3Paycheck, empPaychecks ); 
 		console.groupEnd();
-
-	});  // emp loop end
+	}); 
+}
+function test3Paycheck(paycheck) {
+	console.log( "---", fmtDate( paycheck.get("paydate") ) );
+	var paylines = paycheck.getChildren("payline");
+	j19Loop( db.payline, test3Payline, paylines );
+}
+function test3Payline(payline) {
+	var paycodeName = payline.getRelated( "paycode", "name" );
+	console.log( paycodeName, payline.get("amt") );
 }

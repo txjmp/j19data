@@ -1,4 +1,4 @@
-// sum payline.amt by emp.id,, paycode.type, paycode.name 
+// sum payline.amt by emp.id, paycode.type, paycode.name 
 
 function test5a() {
 	console.group("test5a - create temp table (outEmpPay)");
@@ -53,7 +53,7 @@ function test5b() {
 				out[fld] = '----';
 			}
 		}
-		console.log(out.emp_id, out.name, out.paycode_type, out.paycode_name, out.total, " count: ", out.count);
+		console.log(out.emp_id, out.name, out.paycode_type, out.paycode_name, out.total, "count:", out.count);
 	});
 	console.groupEnd();
 }

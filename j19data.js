@@ -1,4 +1,5 @@
 var j19db;	// must be set during startup by app  ex. j19db = db; where db = {};
+var j19AlertOnJoinFindBinaryNoMatch = true;  // show alert msg if j19Rec.join() no match with findBinary 
 
 Array.prototype.j19GetNdx = function(searchVal) {
 	var ndx = -1;
@@ -175,7 +176,7 @@ j19Rec.prototype.join = function( tblName ) {
 	var toFld = relation.to;
 	var joinVal = this.get(joinFld);
 	var relatedNdx = j19FindBinary( relatedTable, joinVal, toFld );
-	if( relatedNdx == -1 ) {
+	if( relatedNdx == -1 && j19AlertOnJoinFindBinaryNoMatch ) {
 		alert("join nomatch with findBinary, " + tblName + ", " + joinVal);
 		relatedNdx = j19Find( relatedTable, joinVal, toFld );
 	}

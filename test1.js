@@ -21,12 +21,14 @@ function showData() {
 
 function showChildren() {
 	console.group("show children, paychecks by emp");
-	var childndxs;
-	db.emp.forEach( function(emprec) {
-		console.log( emprec.get("name") );
-		childndxs = emprec.getChildren("paycheck");
+	var childndxs, paydate;
+	db.emp.forEach( function(emp) {
+		console.log( emp.get("name") );
+		childndxs = emp.getChildren("paycheck");
+		console.log("childndxs=" + childndxs);
 		j19Loop( db.paycheck, function(checkrec) {
-			console.log( "paycheck date " + checkrec.get("paydate") );
+			paydate = checkrec.get("paydate");
+			console.log( "paycheck empid-paydate: ", checkrec.get("emp_id"), "-", fmtDate(paydate) );
 		}, childndxs);
 	})
 	console.groupEnd();
@@ -34,13 +36,15 @@ function showChildren() {
 
 function showRelated() {
 	console.group("show related");
-
+	console.log("--- emp + job ---")
 	db.emp.forEach( function(emp) {
 		console.log( emp.get("name") + ", " + emp.getRelated("job", "jobName") );
 	})
+	console.log("--- payline + paycode ---")
+	var paycode;
 	db.payline.forEach( function(payline) {
 		paycode = payline.getRelated("paycode");
-		console.log( paycode.get("type"), ", ", paycode.get("name"), payline.get('amt') );
+		console.log( paycode.get("type"), ", ", paycode.get("name"), ", amt:", payline.get('amt') );
 	})
 	console.groupEnd();
 }
@@ -57,7 +61,7 @@ function sortData() {
 	console.log("by paydate descending");
 	sortOrder = j19Sort( db.paycheck, ["paydate:d"] );
 	j19Loop( db.paycheck, function(paycheck) {
-		console.log( paycheck.get("paydate"), paycheck.getRelated("emp", "name") );
+		console.log( fmtDate(paycheck.get("paydate")), paycheck.getRelated("emp", "name") );
 	}, sortOrder);
 
 	console.groupEnd();

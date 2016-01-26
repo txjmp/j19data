@@ -2,6 +2,10 @@
 
 ##A single javascript module providing relational data features.  
 
+##Status  
+Basically complete for version 1. Looking for others to give it a try and provide feedback. May consider API changes depending on responses.
+Needs to be tested more thoroughly before any serious projects use it.
+ 
 Example Showing How a Simple Query Works  
 
 ```

@@ -61,8 +61,10 @@ NOTE: moving or deleting a record from its data array will break relationships t
 .getRelated( tblName, fld ) - get value from related record (join must have been executed first)   
 &nbsp; &nbsp; &nbsp; &nbsp; if fld is not specified, reference to related j19Rec is returned  
 .getChildren( tblName ) - returns array of rec indexes for specified child rec  
-.clearChangedFlags( fld ) - clears rec and fld changed flags  
-&nbsp; &nbsp; &nbsp; &nbsp; fld (optional) - clear change flag just for this field  
+.getChanged() - return obj containing changed values {fldname:newValue}  
+&nbsp; &nbsp; &nbsp; &nbsp; only call if, j19Rec.recChanged == true    
+.clearChangedFlags( fld ) - clears recChanged and indiviual field changed flags  
+&nbsp; &nbsp; &nbsp; &nbsp; fld (optional) - clear change flag for this field only  
 
 ##Dataset Functions  
 Following values are used for multiple functions.
