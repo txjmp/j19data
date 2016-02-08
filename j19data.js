@@ -1,17 +1,6 @@
 var j19db;	// must be set during startup by app  ex. j19db = db; where db = {};
 var j19AlertOnJoinFindBinaryNoMatch = true;  // show alert msg if j19Rec.join() no match with findBinary 
 
-Array.prototype.j19GetNdx = function(searchVal) {
-	var ndx = -1;
-	for(var i=0, cnt=this.length; i<cnt; i++) {
-		if(this[i] === searchVal) {
-			ndx = i;
-			break;
-		}	
-	}
-	return ndx;
-}
-
 function j19Error( msg ) {
 	var errMsg = '** Hey Programmer: j19 Error ** \n' + msg;
 	alert( errMsg );
@@ -198,7 +187,7 @@ j19Rec.prototype.addChild = function( childName, childNdx ) {
 	if( !this.children[childName] ) {
 		return;   // not a child
 	}
-	if( this.children[childName].j19GetNdx(childNdx) > -1 ) {
+	if( this.children[childName].indexOf(childNdx) > -1 ) {
 		return;  // child already loaded
 	}
 	this.children[childName].push(childNdx);	
@@ -256,7 +245,7 @@ j19Rec.prototype.clearChangedFlags = function( fld ) {
 	if( fld ) { 
 		var fldNdx = this.def.fldNdx[fld];
 		this.fldChanged[fldNdx] = false;
-		if( this.fldChanged.j19GetNdx(true) == -1 ) {  // no other flags are true
+		if( this.fldChanged.indexOf(true) == -1 ) {  // no other flags are true
 			this.recChanged = false;
 		}
 		return;
